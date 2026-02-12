@@ -1,0 +1,34 @@
+posts
+GET postsテーブルall
+検索 tag
+
+works
+GET worksテーブルall
+検索 tech_stack
+
+books
+GET booksテーブルall
+検索 tag
+
+contact
+POST
+
+auth
+
+admin/posts
+POST
+
+/admin/posts/[slug]/edit
+PUT
+
+admin/works
+POST
+
+/admin/works/[slug]/edit
+PUT
+
+admin/books
+POST
+
+/admin/books/[slug]/edit
+PUT
