@@ -10,12 +10,15 @@
 		"deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
 		"upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
 		"preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts"
+		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
+		"db:generate": "npx drizzle-kit generate",
+		"db:migrate": "npx drizzle-kit migrate"
 	},
 	"dependencies": {
 		"@opennextjs/cloudflare": "^1.15.1",
 		"dotenv": "^17.2.4",
 		"drizzle-orm": "^0.45.1",
+		"hono": "^4.11.9",
 		"next": "16.1.5",
 		"react": "19.1.5",
 		"react-dom": "19.1.5"

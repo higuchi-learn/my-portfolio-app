@@ -1,0 +1,19 @@
+/
+├── /
+├── /posts
+│   └── /[slug]
+├── /books
+│   └── /[slug]
+├── /works
+│   └── /[slug]
+├── /contact
+└── /admin
+    ├── /posts
+    │   ├── /create
+    │   └── [slug]/edit
+    ├── /books
+    │   ├── /create
+    │   └── [slug]/edit
+    └── /works
+        ├── /create
+        └── [slug]/edit
