@@ -1,8 +1,6 @@
 import { sqliteTable, text, check } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
-
-const articleStatusValues = ["draft", "published", "archived"] as const;
-export type ArticleStatus = typeof articleStatusValues[number];
+import { ArticleStatus } from "./common";
 
 export const posts = sqliteTable("posts", {
   id: text("id")
