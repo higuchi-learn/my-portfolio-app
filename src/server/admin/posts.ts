@@ -5,6 +5,26 @@ import { AppEnv } from "@/types/context";
 
 export const adminPosts = new Hono<AppEnv>();
 
+adminPosts.get("/", async (c) => {
+  const db = c.get("db");
+  const repo = postsRepository(db);
+  const posts = await repo.findAll();
+  return c.json(posts);
+});
+
+adminPosts.get("/:slug", async (c) => {
+  const db = c.get("db");
+  const repo = postsRepository(db);
+  const slug = c.req.param("slug");
+  const post = await repo.findBySlug(slug);
+
+  if (!post) {
+    return c.json({ error: "Not found" }, 404);
+  }
+
+  return c.json(post);
+});
+
 adminPosts.post("/create", async (c) => {
   const db = c.get("db");
   const repo = postsRepository(db);
@@ -21,6 +41,17 @@ adminPosts.post("/create", async (c) => {
       errors: parsed.error.issues,
     },
     400
+    );
+  }
+
+  const existing = await repo.findBySlug(parsed.data.slug);
+
+  if (existing) {
+    return c.json(
+      {
+        message: "Slug already exists",
+      },
+      409
     );
   }
 

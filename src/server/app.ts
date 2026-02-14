@@ -4,6 +4,9 @@ import * as schema from "@/db/schema/index";
 import { postsRoute } from "@/server/posts";
 import { worksRoute } from "@/server/works";
 import { booksRoute } from "@/server/books";
+import { adminPosts } from "@/server/admin/posts";
+import { adminWorks } from "@/server/admin/works";
+import { adminBooks } from "@/server/admin/books";
 import { AppEnv } from "@/types/context";
 
 // Honoアプリケーションの作成
@@ -22,6 +25,9 @@ app.get("/", (c) => c.json({ ok: true }));
 app.route("/posts",postsRoute);
 app.route("/works",worksRoute);
 app.route("/books",booksRoute);
+app.route("/admin/posts", adminPosts);
+app.route("/admin/works", adminWorks);
+app.route("/admin/books", adminBooks);
 
 // エラーハンドリング
 app.onError((err, c) => {
