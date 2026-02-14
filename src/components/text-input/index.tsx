@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, type ChangeEvent } from "react";
 import { propsToDataAttrs } from "@/lib/utilities";
 import "@/components/text-input/text-input.css";
 import Icon from "@/components/icon";
@@ -8,9 +8,7 @@ import Row from "@/components/row";
 import Text from "@/components/text";
 import StateLayer from "@/components/state-layer";
 import { IconName } from "lucide-react/dynamic";
-import { useState, useEffect } from "react";
-import { truncateSync } from "node:fs";
-Text;
+import { useState } from "react";
 
 interface LkTextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   labelPosition?: "default" | "on-input";
@@ -25,8 +23,8 @@ export default function TextInput({
   labelPosition = "default",
   helpText,
   placeholder = "Placeholder",
-  name = "Label",
-  endIcon = "search",
+  name,
+  endIcon,
   labelBackgroundColor,
   ...restProps
 }: LkTextInputProps) {
@@ -35,12 +33,26 @@ export default function TextInput({
     [labelPosition],
   );
 
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(
+    typeof restProps.defaultValue === "string" ? restProps.defaultValue : "",
+  );
+
+  const isControlled = restProps.value !== undefined;
+  const currentValue = isControlled ? String(restProps.value ?? "") : inputValue;
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!isControlled) {
+      setInputValue(event.target.value);
+    }
+    restProps.onChange?.(event);
+  };
+
+  const inputId = restProps.id ?? name;
 
   return (
     <div data-lk-component="text-input" {...textInputProps}>
-      {labelPosition === "default" && (
-        <label htmlFor={name} className="label">
+      {labelPosition === "default" && !!name && (
+        <label htmlFor={inputId} className="label">
           {name}
         </label>
       )}
@@ -50,10 +62,10 @@ export default function TextInput({
         data-lk-input-help-text={helpText ? "true" : "false"}
         data-help-text={helpText}
       >
-        {labelPosition === "on-input" && (
+        {labelPosition === "on-input" && !!name && (
           <label
-            htmlFor={name}
-            className={`body ${labelBackgroundColor ? ` bg-${labelBackgroundColor}` : ""} ${inputValue ? "on-field-with-value-set" : ""}`}
+            htmlFor={inputId}
+            className={`body ${labelBackgroundColor ? ` bg-${labelBackgroundColor}` : ""} ${currentValue ? "on-field-with-value-set" : ""}`}
           >
             {name}
           </label>
@@ -61,14 +73,14 @@ export default function TextInput({
         <input
           type="text"
           name={name}
-          id={name}
+          id={inputId}
           placeholder={labelPosition !== "on-input" ? placeholder : ""}
-          onChange={(e) => setInputValue(e.target.value)}
-          value={inputValue}
+          onChange={handleChange}
+          value={currentValue}
           {...restProps}
         />
         <StateLayer />
-        <Icon name={endIcon} />
+        {endIcon && <Icon name={endIcon} />}
         {/* implementation omitted for brevity */}
       </div>
 
