@@ -1,40 +1,45 @@
 {
-	"name": "my-portfolio-app",
-	"version": "0.1.0",
-	"private": true,
-	"scripts": {
-		"dev": "next dev",
-		"build": "next build",
-		"start": "next start",
-		"lint": "next lint",
-		"deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-		"upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
-		"preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
-		"db:generate": "npx drizzle-kit generate",
-		"db:migrate": "npx drizzle-kit migrate"
-	},
-	"dependencies": {
-		"@opennextjs/cloudflare": "^1.15.1",
-		"dotenv": "^17.2.4",
-		"drizzle-orm": "^0.45.1",
-		"hono": "^4.11.9",
-		"next": "16.1.5",
-		"react": "19.1.5",
-		"react-dom": "19.1.5",
-		"zod": "^4.3.6"
-	},
-	"devDependencies": {
-		"@eslint/eslintrc": "^3",
-		"@tailwindcss/postcss": "^4",
-		"@types/node": "^20.19.33",
-		"@types/react": "^19.1.5",
-		"@types/react-dom": "^19.1.5",
-		"drizzle-kit": "^0.31.9",
-		"eslint": "^9",
-		"eslint-config-next": "15.4.6",
-		"tailwindcss": "^4",
-		"typescript": "^5.7.4",
-		"wrangler": "^4.64.0"
-	}
+  "name": "my-portfolio-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
+    "db:generate": "npx drizzle-kit generate",
+    "db:migrate": "npx drizzle-kit migrate",
+    "add": "liftkit add"
+  },
+  "dependencies": {
+    "@csstools/normalize.css": "^12.1.1",
+    "@material/material-color-utilities": "^0.4.0",
+    "@opennextjs/cloudflare": "^1.15.1",
+    "dotenv": "^17.2.4",
+    "drizzle-orm": "^0.45.1",
+    "hono": "^4.11.9",
+    "lucide-react": "^0.564.0",
+    "next": "16.1.5",
+    "react": "19.1.5",
+    "react-dom": "19.1.5",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@chainlift/liftkit": "^0.2.0",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20.19.33",
+    "@types/react": "^19.1.5",
+    "@types/react-dom": "^19.1.5",
+    "drizzle-kit": "^0.31.9",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.6",
+    "tailwindcss": "^4",
+    "typescript": "^5.7.4",
+    "wrangler": "^4.65.0"
+  }
 }
