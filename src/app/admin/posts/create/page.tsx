@@ -14,7 +14,8 @@ import Button from "@/components/button";
 import Text from "@/components/text";
 import Row from "@/components/row";
 import PostCard from "@/components/features/posts";
-import styles from "@/app/markdown-preview.module.css";
+import mdStyles from "@/app/markdown-preview.module.css";
+import adminEditorMdeStyles from "@/app/admin/admin-editor-mde.module.css";
 
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), { ssr: false });
 
@@ -156,18 +157,20 @@ export default function Page() {
 	);
 
 	return (
-		<Container className="min-h-full">
-      <Section>
-        <Row className="border">
+		<Container className="flex h-screen min-h-screen flex-col overflow-hidden">
+			<Section className="shrink-0">
+        <Row className="" gap="sm">
           <Heading tag="h1" fontClass="title1">Blog新規作成</Heading>
-          <Button label="仮保存" variant="outline" color="primary" />
-          <Button label="公開" variant="fill" color="primary" />
+					<Row className="justify-between" gap="sm">
+						<Button label="仮保存" variant="outline" color="primary" />
+						<Button label="公開" variant="fill" color="primary" />
+					</Row>
         </Row>
       </Section>
-			<Grid columns={2} gap="md">
-				<Section>
-					<Container>
-            <Column gap="sm">
+			<Grid columns={2} gap="md" className="min-h-0 flex-1 overflow-hidden p-sm">
+				<Section className="h-full min-h-0 overflow-hidden [&>[data-lk-component='section']]:h-full">
+					<Container className="h-full">
+						<Column gap="sm" className="h-full min-h-0">
 							<TextInput
 								value={title}
 								name="Title"
@@ -190,20 +193,22 @@ export default function Page() {
 								placeholder="検索用タグ（例: react,nextjs）"
 							/>
 							<Text fontClass="label-bold">Content</Text>
-							<SimpleMDE
-								id="post-content"
-								value={content}
-								onChange={setContent}
-								options={editorOptions}
-								getMdeInstance={setMdeInstance}
-								className="admin-editor-mde"
-							/>
+							<div className="min-h-0 flex-1 overflow-hidden">
+								<SimpleMDE
+									id="post-content"
+									value={content}
+									onChange={setContent}
+									options={editorOptions}
+									getMdeInstance={setMdeInstance}
+									className={adminEditorMdeStyles.adminEditorMde}
+								/>
+							</div>
 						</Column>
 					</Container>
 				</Section>
 
-				<Section className="admin-editor-pane">
-					<Column gap="sm">
+				<Section className="h-full min-h-0 overflow-hidden [&>[data-lk-component='section']]:h-full">
+					<Column gap="sm" className="h-full min-h-0 overflow-hidden">
 						<TextInput
 							value={thumbnail}
 							name="thumbnail"
@@ -214,16 +219,16 @@ export default function Page() {
 						/>
 						<Text fontClass="label-bold">一覧ページカードプレビュー</Text>
 						<Container className="max-w-xl">
-							<PostCard />
+							<PostCard clickable={false} />
 						</Container>
-					</Column>
-					<article className="space-y-4 admin-editor-preview-pane">
+						<article className="admin-editor-preview-pane min-h-0 flex-1 space-y-4 overflow-y-auto">
 						<h1 className="text-3xl font-bold">{title || "PreView"}</h1>
 
-						<div className={styles.markdownPreview}>
+						<div className={mdStyles.markdownPreview}>
 							<ReactMarkdown>{content || ""}</ReactMarkdown>
 						</div>
 					</article>
+					</Column>
 				</Section>
 			</Grid>
 		</Container>

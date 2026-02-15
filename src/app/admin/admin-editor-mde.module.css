@@ -1,0 +1,40 @@
+.adminEditorMde {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.adminEditorMde :global(.EasyMDEContainer) {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.adminEditorMde :global(.CodeMirror) {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  border: 1px solid var(--lk-outlinevariant);
+  border-radius: 0 0 var(--lk-size-sm) var(--lk-size-sm);
+}
+
+.adminEditorMde :global(.editor-toolbar) {
+  flex-shrink: 0;
+  border: 1px solid var(--lk-outlinevariant);
+  border-bottom: 0;
+  border-radius: var(--lk-size-sm) var(--lk-size-sm) 0 0;
+  background: var(--lk-surface);
+}
+
+.adminEditorMde :global(.CodeMirror .cm-header),
+.adminEditorMde :global(.CodeMirror .cm-header-1),
+.adminEditorMde :global(.CodeMirror .cm-header-2),
+.adminEditorMde :global(.CodeMirror .cm-header-3),
+.adminEditorMde :global(.CodeMirror .cm-header-4),
+.adminEditorMde :global(.CodeMirror .cm-header-5),
+.adminEditorMde :global(.CodeMirror .cm-header-6) {
+  font-size: inherit;
+  line-height: inherit;
+}

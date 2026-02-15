@@ -7,15 +7,19 @@ import Container from "@/components/container";
 import Column from "@/components/column";
 import Row from "@/components/row";
 
-export default function PostCard() {
+interface PostCardProps {
+  clickable?: boolean;
+}
+
+export default function PostCard({ clickable = true }: PostCardProps) {
   return (
     <Card scaleFactor="body"
             className="w-full posts-card-item"
               variant="outline"
               material="glass"
               lk-material="glass"
-              isClickable
-              onClick={() => alert("Card clicked!")}
+              isClickable={clickable}
+              onClick={clickable ? () => alert("Card clicked!") : undefined}
             >
       <Container className="relative">
         <Column className="pr-4xl">

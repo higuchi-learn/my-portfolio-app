@@ -87,20 +87,3 @@ body {
   }
 }
 
-.admin-editor-mde .editor-toolbar {
-  border: 1px solid var(--lk-outlinevariant);
-  border-bottom: 0;
-  border-radius: var(--lk-size-sm) var(--lk-size-sm);
-  background: var(--lk-surface);
-}
-
-.admin-editor-mde .CodeMirror .cm-header,
-.admin-editor-mde .CodeMirror .cm-header-1,
-.admin-editor-mde .CodeMirror .cm-header-2,
-.admin-editor-mde .CodeMirror .cm-header-3,
-.admin-editor-mde .CodeMirror .cm-header-4,
-.admin-editor-mde .CodeMirror .cm-header-5,
-.admin-editor-mde .CodeMirror .cm-header-6 {
-  font-size: inherit;
-  line-height: inherit;
-}
