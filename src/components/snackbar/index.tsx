@@ -30,20 +30,23 @@ export default function Snackbar(props: LkSnackbarProps) {
   const { globalColor, message = "Notification text goes here.", cardProps, children, ...restProps } = props;
 
   // Declare allowed types, so if a child with the wrong type is passed, it'll throw an error
-  const allowedTypes = [Badge, Button, Icon, IconButton, Text] as React.ComponentType<any>[];
+  const allowedTypes = [Badge, Button, Icon, IconButton, Text] as React.ComponentType<unknown>[];
 
   // Validate all children first
   const childArray = React.Children.toArray(children);
 
   // Helper function to get component name for error messages
-  const getComponentName = (type: any): string => {
+  const getComponentName = (type: unknown): string => {
     if (typeof type === "string") return type;
-    return type?.displayName || type?.name || "Unknown";
+    if (typeof type === "function") {
+      return (type as { displayName?: string; name?: string }).displayName || type.name || "Unknown";
+    }
+    return "Unknown";
   };
 
   // Validate all children upfront
   React.Children.forEach(children, (child) => {
-    if (React.isValidElement(child) && !allowedTypes.includes(child.type as React.ComponentType)) {
+    if (React.isValidElement(child) && !allowedTypes.includes(child.type as React.ComponentType<unknown>)) {
       throw new Error(
         `Snackbar component received an invalid child component: ${getComponentName(child.type)}. ` +
           `Only Badge, Button, and IconButton components are allowed.`
@@ -53,11 +56,11 @@ export default function Snackbar(props: LkSnackbarProps) {
 
   // Find components and validate at the same time
   let badge: React.ReactElement | undefined;
-  let buttons: React.ReactElement[] = [];
+  const buttons: React.ReactElement[] = [];
   let icon: React.ReactElement | undefined;
-  let iconButtons: React.ReactElement[] = [];
+  const iconButtons: React.ReactElement[] = [];
 
-  let text: React.ReactElement[] = [];
+  const text: React.ReactElement[] = [];
 
   childArray.forEach((child) => {
     if (!React.isValidElement(child)) return;

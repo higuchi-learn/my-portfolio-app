@@ -22,6 +22,7 @@ export const booksRepository = (db: DB) => ({
     title: string;
     author: string;
     description: string;
+    thumbnail?: string;
     content: string;
     tags?: string;
     status?: "draft" | "published" | "archived";

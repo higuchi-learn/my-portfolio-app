@@ -23,6 +23,7 @@ export const postsRepository = (db: DB) => ({
     slug: string;
     title: string;
     description: string;
+    thumbnail?: string;
     content: string;
     tags?: string;
     status?: "draft" | "published" | "archived";

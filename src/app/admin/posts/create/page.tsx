@@ -1,7 +1,9 @@
 "use client";
 
-import { type ClipboardEvent, useMemo, useState } from "react";
-import { marked } from "marked";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import type EasyMDE from "easymde";
+import ReactMarkdown from "react-markdown";
 import Container from "@/components/container";
 import Column from "@/components/column";
 import Section from "@/components/section";
@@ -9,101 +11,168 @@ import Grid from "@/components/grid";
 import Heading from "@/components/heading";
 import TextInput from "@/components/text-input";
 import Button from "@/components/button";
+import Text from "@/components/text";
 import Row from "@/components/row";
+import PostCard from "@/components/features/posts";
+import styles from "@/app/markdown-preview.module.css";
+
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), { ssr: false });
 
 export default function Page() {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
+	const [thumbnail, setThumbnail] = useState("");
 	const [tags, setTags] = useState("");
 	const [content, setContent] = useState("");
+	const [mdeInstance, setMdeInstance] = useState<EasyMDE | null>(null);
 
-	const readFileAsDataUrl = (file: File) =>
-		new Promise<string>((resolve, reject) => {
-			const reader = new FileReader();
-			reader.onload = () => resolve(String(reader.result ?? ""));
-			reader.onerror = () => reject(new Error("Failed to read pasted image"));
-			reader.readAsDataURL(file);
+	const uploadImageToR2 = useCallback(async (file: File) => {
+		const formData = new FormData();
+		formData.append("image", file);
+
+		const response = await fetch("/api/admin/posts/upload-image", {
+			method: "POST",
+			body: formData,
 		});
 
-	const handleContentPaste = async (event: ClipboardEvent<HTMLTextAreaElement>) => {
-		const imageItems = Array.from(event.clipboardData.items).filter(
+		if (!response.ok) {
+			const errorBody = (await response.json().catch(() => null)) as { message?: string } | null;
+			throw new Error(errorBody?.message ?? "Failed to upload pasted image");
+		}
+
+		const data = (await response.json()) as { markdownUrl?: string; url?: string };
+		const imageUrl = data.markdownUrl ?? data.url;
+
+		if (!imageUrl) {
+			throw new Error("Upload completed but image URL was missing");
+		}
+
+		return imageUrl;
+	}, []);
+
+	const handleImagePaste = useCallback(async (event: ClipboardEvent) => {
+		const imageItems = Array.from(event.clipboardData?.items ?? []).filter(
 			(item) => item.kind === "file" && item.type.startsWith("image/"),
 		);
 
-		if (imageItems.length === 0) {
+		if (imageItems.length === 0 || !mdeInstance) {
 			return;
 		}
 
 		event.preventDefault();
-		const textarea = event.currentTarget;
-		const selectionStart = textarea.selectionStart;
-		const selectionEnd = textarea.selectionEnd;
+		const doc = mdeInstance.codemirror.getDoc();
+		const selectionStartPos = doc.getCursor("from");
+		const selectionEndPos = doc.getCursor("to");
+		const editorValue = doc.getValue();
+		const selectionStart = doc.indexFromPos(selectionStartPos);
+		const selectionEnd = doc.indexFromPos(selectionEndPos);
 
 		const markdownImages: string[] = [];
 
-		for (const item of imageItems) {
-			const file = item.getAsFile();
-			if (!file) {
-				continue;
-			}
+		try {
+			for (const item of imageItems) {
+				const file = item.getAsFile();
+				if (!file) {
+					continue;
+				}
 
-			const imageDataUrl = await readFileAsDataUrl(file);
-			if (!imageDataUrl) {
-				continue;
-			}
+				const imageUrl = await uploadImageToR2(file);
+				if (!imageUrl) {
+					continue;
+				}
 
-			const baseName = file.name ? file.name.replace(/\.[^/.]+$/, "") : "pasted-image";
-			markdownImages.push(`![${baseName}](${imageDataUrl})`);
+				const baseName = file.name ? file.name.replace(/\.[^/.]+$/, "") : "pasted-image";
+				markdownImages.push(`![${baseName}](${imageUrl})`);
+			}
+		} catch (error) {
+			console.error(error);
+			return;
 		}
 
 		if (markdownImages.length === 0) {
 			return;
 		}
 
-		let nextCursorPosition = selectionStart;
+		const before = editorValue.slice(0, selectionStart);
+		const after = editorValue.slice(selectionEnd);
+		const needsLeadingNewline = before.length > 0 && !before.endsWith("\n");
+		const prefix = needsLeadingNewline ? "\n" : "";
+		const inserted = `${prefix}${markdownImages.join("\n\n")}\n`;
+		const nextValue = `${before}${inserted}${after}`;
+		const nextCursorPosition = before.length + inserted.length;
 
-		setContent((prev) => {
-			const before = prev.slice(0, selectionStart);
-			const after = prev.slice(selectionEnd);
-			const needsLeadingNewline = before.length > 0 && !before.endsWith("\n");
-			const prefix = needsLeadingNewline ? "\n" : "";
-			const inserted = `${prefix}${markdownImages.join("\n\n")}\n`;
-			nextCursorPosition = before.length + inserted.length;
-			return `${before}${inserted}${after}`;
-		});
+		doc.setValue(nextValue);
+		doc.setCursor(doc.posFromIndex(nextCursorPosition));
+		setContent(nextValue);
+	}, [mdeInstance, uploadImageToR2]);
 
-		requestAnimationFrame(() => {
-			textarea.focus();
-			textarea.setSelectionRange(nextCursorPosition, nextCursorPosition);
-		});
-	};
+	const handleThumbnailPaste = useCallback(async (event: React.ClipboardEvent<HTMLInputElement>) => {
+		const imageItem = Array.from(event.clipboardData.items).find(
+			(item) => item.kind === "file" && item.type.startsWith("image/"),
+		);
 
-	const html = useMemo(() => {
-		return marked.parse(content || "", {
-			gfm: true,
-			breaks: true,
-		}) as string;
-	}, [content]);
+		if (!imageItem) {
+			return;
+		}
+
+		event.preventDefault();
+		const file = imageItem.getAsFile();
+		if (!file) {
+			return;
+		}
+
+		try {
+			const imageUrl = await uploadImageToR2(file);
+			setThumbnail(imageUrl);
+		} catch (error) {
+			console.error(error);
+		}
+	}, [uploadImageToR2]);
+
+	useEffect(() => {
+		if (!mdeInstance) {
+			return;
+		}
+
+		const codeMirror = mdeInstance.codemirror;
+		const onPaste = (_instance: unknown, event: ClipboardEvent) => {
+			void handleImagePaste(event);
+		};
+
+		codeMirror.on("paste", onPaste);
+
+		return () => {
+			codeMirror.off("paste", onPaste);
+		};
+	}, [handleImagePaste, mdeInstance]);
+
+	const editorOptions = useMemo(
+		() => ({
+			spellChecker: false,
+			status: false,
+			placeholder: "# 本文をMarkdownで記述",
+		}),
+		[],
+	);
 
 	return (
-		<Container className="admin-editor-page admin-full-width">
+		<Container className="min-h-full">
       <Section>
-        <Row>
+        <Row className="border">
           <Heading tag="h1" fontClass="title1">Blog新規作成</Heading>
           <Button label="仮保存" variant="outline" color="primary" />
           <Button label="公開" variant="fill" color="primary" />
         </Row>
       </Section>
-			<Grid columns={2} gap="md" className="admin-editor-grid">
-				<Section className="admin-editor-pane">
-					<Container className="admin-editor-form-shell">
-            <Column gap="md" className="admin-editor-form">
+			<Grid columns={2} gap="md">
+				<Section>
+					<Container>
+            <Column gap="sm">
 							<TextInput
 								value={title}
 								name="Title"
                 endIcon="edit"
 								onChange={(event) => setTitle(event.target.value)}
-								className="w-full"
 								placeholder="記事タイトル"
 							/>
               <TextInput
@@ -111,7 +180,6 @@ export default function Page() {
 								name="Description"
                 endIcon="edit"
 								onChange={(event) => setDescription(event.target.value)}
-								className="w-full"
 								placeholder="概要(記事には表示されません)"
 							/>
               <TextInput
@@ -119,30 +187,42 @@ export default function Page() {
 								name="Tags"
                 endIcon="edit"
 								onChange={(event) => setTags(event.target.value)}
-								className="w-full"
 								placeholder="検索用タグ（例: react,nextjs）"
 							/>
-
-              <label htmlFor="post-content" className="label">
-                Content
-              </label>
-              <textarea
-                id="post-content"
-                value={content}
-                onChange={(event) => setContent(event.target.value)}
-								onPaste={handleContentPaste}
-                className="admin-editor-textarea"
-                placeholder="# 本文をMarkdownで記述"
-              />
-            </Column>
+							<Text fontClass="label-bold">Content</Text>
+							<SimpleMDE
+								id="post-content"
+								value={content}
+								onChange={setContent}
+								options={editorOptions}
+								getMdeInstance={setMdeInstance}
+								className="admin-editor-mde"
+							/>
+						</Column>
 					</Container>
 				</Section>
 
 				<Section className="admin-editor-pane">
+					<Column gap="sm">
+						<TextInput
+							value={thumbnail}
+							name="thumbnail"
+							endIcon="edit"
+							onChange={(event) => setThumbnail(event.target.value)}
+							onPaste={handleThumbnailPaste}
+							placeholder="サムネイル画像をペースト"
+						/>
+						<Text fontClass="label-bold">一覧ページカードプレビュー</Text>
+						<Container className="max-w-xl">
+							<PostCard />
+						</Container>
+					</Column>
 					<article className="space-y-4 admin-editor-preview-pane">
 						<h1 className="text-3xl font-bold">{title || "PreView"}</h1>
 
-						<div className="markdown-preview" dangerouslySetInnerHTML={{ __html: html }} />
+						<div className={styles.markdownPreview}>
+							<ReactMarkdown>{content || ""}</ReactMarkdown>
+						</div>
 					</article>
 				</Section>
 			</Grid>

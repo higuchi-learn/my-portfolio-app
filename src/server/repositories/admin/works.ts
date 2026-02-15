@@ -21,6 +21,7 @@ export const worksRepository = (db: DB) => ({
     slug: string;
     title: string;
     description: string;
+    thumbnail?: string;
     content: string;
     techStack?: string;
     repositoryUrl?: string;

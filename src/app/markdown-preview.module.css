@@ -1,0 +1,72 @@
+.markdownPreview {
+  line-height: 1.7;
+}
+
+.markdownPreview > * + * {
+  margin-top: 0.875rem;
+}
+
+.markdownPreview h1,
+.markdownPreview h2,
+.markdownPreview h3,
+.markdownPreview h4,
+.markdownPreview h5,
+.markdownPreview h6 {
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.markdownPreview h1 {
+  font-size: 2rem;
+}
+
+.markdownPreview h2 {
+  font-size: 1.5rem;
+}
+
+.markdownPreview h3 {
+  font-size: 1.25rem;
+}
+
+.markdownPreview p {
+  font-size: 1rem;
+}
+
+.markdownPreview ul,
+.markdownPreview ol {
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+}
+
+.markdownPreview ul {
+  list-style-type: disc;
+}
+
+.markdownPreview ol {
+  list-style-type: decimal;
+}
+
+.markdownPreview li + li {
+  margin-top: 0.25rem;
+}
+
+.markdownPreview pre {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 0.875rem 1rem;
+}
+
+.markdownPreview code {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 0.9em;
+}
+
+.markdownPreview :not(pre) > code {
+  border-radius: 0.25rem;
+  background: rgba(15, 23, 42, 0.08);
+  padding: 0.1rem 0.35rem;
+}

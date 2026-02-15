@@ -204,7 +204,7 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
    */
 
 const [colorMode, setColorMode] = useState<"light" | "dark">("light");
-  
+
   const [palette, setPalette] = useState<PaletteState>({
   "primary": "#035eff",
   "secondary": "#badcff",
@@ -283,7 +283,7 @@ const [colorMode, setColorMode] = useState<"light" | "dark">("light");
 
   const getTonesFromKeyColors = (palette: PaletteState) => {
     class TonalSwatches {
-      [key: string]: any; // Add index signature for string keys
+      [key: string]: string;
 
       constructor(hue: number, chroma: number) {
         const swatch = TonalPalette.fromHueAndChroma(hue, chroma);
@@ -298,7 +298,7 @@ const [colorMode, setColorMode] = useState<"light" | "dark">("light");
   // Define the updateTheme function
   const updateTheme = useCallback(async (palette: PaletteState) => {
     class TonalSwatches {
-      [key: string]: any; // Add index signature for string keys
+      [key: string]: string;
 
       constructor(hue: number, chroma: number) {
         const swatch = TonalPalette.fromHueAndChroma(hue, chroma);
@@ -310,10 +310,10 @@ const [colorMode, setColorMode] = useState<"light" | "dark">("light");
     }
 
     Object.keys(palette).forEach((key) => {
-      var argb = argbFromHex(palette[key]);
-      var hct = Hct.fromInt(argb);
+      const argb = argbFromHex(palette[key]);
+      const hct = Hct.fromInt(argb);
 
-      var tones = new TonalSwatches(hct.hue, hct.chroma);
+      const tones = new TonalSwatches(hct.hue, hct.chroma);
 
       // map the tones from each color group to a swatch name
 
@@ -458,7 +458,7 @@ const [colorMode, setColorMode] = useState<"light" | "dark">("light");
 
   const updateThemeFromMaster = useCallback(
     async (hexCode: string, setPalette: React.Dispatch<React.SetStateAction<PaletteState>>) => {
-      var newPalette: Record<string, string> = {};
+      const newPalette: Record<string, string> = {};
 
       // need to get the key colors to feed back to the ColorModule so it can update the palette
       try {

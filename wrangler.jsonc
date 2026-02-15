@@ -41,6 +41,12 @@
 			"database_name": "my-portfolio-app",
 			"database_id": "f0db5ae5-f200-4f62-a251-759a53505a6b"
 		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "R2",
+			"bucket_name": "my-portfolio-app"
+		}
 	]
 	/**
 	 * Smart Placement

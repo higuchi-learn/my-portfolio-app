@@ -3,6 +3,7 @@ import { drizzle } from "drizzle-orm/d1";
 // D1のバインディング型定義
 export type AppBindings = {
   my_portfolio_app: D1Database;
+  R2: R2Bucket;
 };
 
 // コンテキストの型定義

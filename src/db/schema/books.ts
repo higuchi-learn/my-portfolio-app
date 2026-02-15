@@ -10,6 +10,7 @@ export const books = sqliteTable("books", {
   title: text("title").notNull(),
   author: text("author").notNull(),
   description: text("description").notNull(),
+  thumbnail: text("thumbnail"),
   content: text("content").notNull(),
   tags: text("tags"),
   status: text("status")

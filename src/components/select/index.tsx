@@ -153,12 +153,19 @@ export function Select({ children, options = [], value = "", onChange, name }: S
 
 export function SelectTrigger({ children }: LkSelectTriggerProps) {
   const { open, setOpen, triggerRef } = useContext(SelectContext);
-  return React.cloneElement(children, {
+  const triggerProps: React.Attributes & React.AriaAttributes & {
+    ref: React.Ref<HTMLElement | null>;
+    onClick: () => void;
+  } = {
     ref: triggerRef,
     onClick: () => setOpen(!open),
     "aria-expanded": open,
     "aria-haspopup": "menu",
-  } as any);
+  };
+
+  return React.cloneElement(children, {
+    ...triggerProps,
+  });
 }
 
 export function SelectMenu({ children, cardProps }: LkSelectMenuProps) {

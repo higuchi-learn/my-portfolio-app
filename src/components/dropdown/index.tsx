@@ -46,12 +46,19 @@ export function Dropdown({ children }: { children: React.ReactNode }) {
 
 export function DropdownTrigger({ children }: LkDropdownTriggerProps) {
   const { open, setOpen, triggerRef } = useContext(DropdownContext);
-  return React.cloneElement(children, {
+  const triggerProps: React.Attributes & React.AriaAttributes & {
+    ref: React.Ref<HTMLElement | null>;
+    onClick: () => void;
+  } = {
     ref: triggerRef,
     onClick: () => setOpen(!open),
     "aria-expanded": open,
     "aria-haspopup": "menu",
-  } as any);
+  };
+
+  return React.cloneElement(children, {
+    ...triggerProps,
+  });
 }
 
 export function DropdownMenu({ children, cardProps }: LkDropdownMenuProps) {
@@ -80,11 +87,11 @@ export function DropdownMenu({ children, cardProps }: LkDropdownMenuProps) {
   /**Calculate transform origin based on triggerRef viewport quadrant */
 
   function getQuadrant() {
-    var windowWidth = window.innerWidth;
-    var windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
 
     /** Origin as in "the corner of the trigger the menu will expand from" */
-    var triggerQuadrant: "top-left" | "top-right" | "bottom-right" | "bottom-left";
+    let triggerQuadrant: "top-left" | "top-right" | "bottom-right" | "bottom-left";
 
     const isTop: boolean = rect.top < windowHeight / 2;
     const isLeft: boolean = rect.left < windowWidth / 2;
@@ -95,7 +102,7 @@ export function DropdownMenu({ children, cardProps }: LkDropdownMenuProps) {
       triggerQuadrant = isLeft ? "top-left" : "top-right";
     }
 
-    var positionStyle: React.CSSProperties = {};
+    let positionStyle: React.CSSProperties = {};
 
     switch (triggerQuadrant) {
       case "top-left":

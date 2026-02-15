@@ -1,6 +1,4 @@
 "use client";
-import { propsToDataAttrs } from "@/lib/utilities";
-import { useMemo } from "react";
 
 /** LKMatProps is an object of any of the given types. Each material type has different unique props. */
 type LkMatProps = LkMatProps_Glass | LkMatProps_Flat;
@@ -31,16 +29,6 @@ export default function MaterialLayer({
   type,
   materialProps,
 }: LkMaterialLayerProps) {
-  /**If materialProps are provided, loop through the keys and pass each one as a data attribute to the component. */
-  let lkMatProps: LkMatProps;
-
-  if (materialProps) {
-    lkMatProps = useMemo(
-      () => propsToDataAttrs(materialProps, `${type}`),
-      [materialProps],
-    );
-  }
-
   /**Commented out, was likely used for debugging */
 
   // switch (material) {

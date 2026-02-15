@@ -9,6 +9,7 @@ export const works = sqliteTable("works", {
   slug: text("slug").notNull().unique(),
   title: text("title").notNull(),
   description: text("description").notNull(),
+  thumbnail: text("thumbnail"),
   content: text("content").notNull(),
   techStack: text("tech_stack"),
   repositoryUrl: text("repository_url"),
