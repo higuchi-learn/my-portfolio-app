@@ -52,12 +52,13 @@ adminPosts.get("/:slug", async (c) => {
 });
 
 adminPosts.get("/images/:key", async (c) => {
-  if (!c.env.R2) {
+  const r2 = c.env?.R2;
+  if (!r2) {
     return c.json({ error: "R2 binding is not configured" }, 500);
   }
 
   const key = c.req.param("key");
-  const object = await c.env.R2.get(key);
+  const object = await r2.get(key);
 
   if (!object) {
     return c.json({ error: "Not found" }, 404);
@@ -75,7 +76,8 @@ adminPosts.get("/images/:key", async (c) => {
 });
 
 adminPosts.post("/upload-image", async (c) => {
-  if (!c.env.R2) {
+  const r2 = c.env?.R2;
+  if (!r2) {
     return c.json({ message: "R2 binding is not configured" }, 500);
   }
 
@@ -97,7 +99,7 @@ adminPosts.post("/upload-image", async (c) => {
   const extension = getExtensionFromFile(image);
   const key = `${Date.now()}-${crypto.randomUUID()}.${extension}`;
 
-  await c.env.R2.put(key, image.stream(), {
+  await r2.put(key, image.stream(), {
     httpMetadata: {
       contentType: image.type,
     },
@@ -135,12 +137,16 @@ adminPosts.post("/create", async (c) => {
   const existing = await repo.findBySlug(parsed.data.slug);
 
   if (existing) {
-    return c.json(
-      {
-        message: "Slug already exists",
-      },
-      409
-    );
+    const updatedPost = await repo.updateBySlug(parsed.data.slug, {
+      title: parsed.data.title,
+      description: parsed.data.description,
+      thumbnail: parsed.data.thumbnail,
+      content: parsed.data.content,
+      tags: parsed.data.tags,
+      status: parsed.data.status,
+    });
+
+    return c.json(updatedPost, 200);
   }
 
   const post = await repo.create(parsed.data);

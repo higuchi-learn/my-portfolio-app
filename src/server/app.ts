@@ -10,12 +10,15 @@ import { adminBooks } from "@/server/admin/books";
 import { AppEnv } from "@/types/context";
 
 // Honoアプリケーションの作成
-const app = new Hono<AppEnv>();
+const app = new Hono<AppEnv>().basePath("/api");
 
 // dbをコンテキストにセットするミドルウェア)
 app.use("*", async (c, next) => {
-  const db = drizzle(c.env.my_portfolio_app, { schema });
-  c.set("db", db);
+  const d1 = c.env?.my_portfolio_app;
+  if (d1) {
+    const db = drizzle(d1, { schema });
+    c.set("db", db);
+  }
   await next();
 });
 

@@ -13,7 +13,10 @@ import TextInput from "@/components/text-input";
 import Button from "@/components/button";
 import Text from "@/components/text";
 import Row from "@/components/row";
+import Icon from "@/components/icon";
+import Badge from "@/components/badge";
 import PostCard from "@/components/features/posts";
+import Snackbar from "@/components/snackbar";
 import mdStyles from "@/app/markdown-preview.module.css";
 import adminEditorMdeStyles from "@/app/admin/admin-editor-mde.module.css";
 
@@ -23,9 +26,115 @@ export default function Page() {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [thumbnail, setThumbnail] = useState("");
+	const [slug, setSlug] = useState("");
 	const [tags, setTags] = useState("");
 	const [content, setContent] = useState("");
+	const [saveMessage, setSaveMessage] = useState("");
+	const [isSavingDraft, setIsSavingDraft] = useState(false);
+	const [isPublishing, setIsPublishing] = useState(false);
+	const [lastSavedAt, setLastSavedAt] = useState<string>("");
+	const [lastSavedSnapshot, setLastSavedSnapshot] = useState("");
 	const [mdeInstance, setMdeInstance] = useState<EasyMDE | null>(null);
+
+	const savePayload = useMemo(
+		() => ({
+			slug: slug.trim(),
+			title: title.trim(),
+			description: description.trim(),
+			thumbnail: thumbnail.trim() || undefined,
+			content,
+			tags: tags.trim() || undefined,
+		}),
+		[content, description, slug, tags, thumbnail, title],
+	);
+
+	const currentSnapshot = useMemo(() => JSON.stringify(savePayload), [savePayload]);
+
+	const formatSavedAt = useCallback((date: Date) => {
+		const pad = (value: number) => String(value).padStart(2, "0");
+		return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+	}, []);
+
+	const savePost = useCallback(async (status: "draft" | "published", isAutoSave = false) => {
+		if (isSavingDraft || isPublishing) {
+			return;
+		}
+
+		if (!savePayload.slug || !savePayload.title || !savePayload.description || !savePayload.content.trim()) {
+			if (!isAutoSave) {
+				setSaveMessage("Slug / Title / Description / Content を入力してから保存してください。");
+			}
+			return;
+		}
+
+		if (isAutoSave && currentSnapshot === lastSavedSnapshot) {
+			return;
+		}
+
+		if (status === "draft") {
+			setIsSavingDraft(true);
+			setSaveMessage(isAutoSave ? "自動保存中..." : "仮保存中...");
+		} else {
+			setIsPublishing(true);
+			setSaveMessage("公開中...");
+		}
+
+		try {
+			const response = await fetch("/api/admin/posts/create", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					...savePayload,
+					status,
+				}),
+			});
+
+			if (!response.ok) {
+				const errorBody = (await response.json().catch(() => null)) as { message?: string } | null;
+				setSaveMessage(errorBody?.message ?? (status === "draft" ? "仮保存に失敗しました。" : "公開に失敗しました。"));
+				return;
+			}
+
+			setLastSavedSnapshot(currentSnapshot);
+			setLastSavedAt(formatSavedAt(new Date()));
+			if (status === "draft") {
+				setSaveMessage(isAutoSave ? "自動保存しました。" : "仮保存しました。");
+			} else {
+				setSaveMessage("公開しました。");
+			}
+		} catch (error) {
+			console.error(error);
+			if (!isAutoSave) {
+				setSaveMessage(status === "draft" ? "通信エラーにより仮保存できませんでした。" : "通信エラーにより公開できませんでした。");
+			}
+		} finally {
+			if (status === "draft") {
+				setIsSavingDraft(false);
+			} else {
+				setIsPublishing(false);
+			}
+		}
+	}, [currentSnapshot, formatSavedAt, isPublishing, isSavingDraft, lastSavedSnapshot, savePayload]);
+
+	const handleDraftSave = useCallback(async () => {
+		await savePost("draft");
+	}, [savePost]);
+
+	const handlePublishSave = useCallback(async () => {
+		await savePost("published");
+	}, [savePost]);
+
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			void savePost("draft", true);
+		}, 3 * 60 * 1000);
+
+		return () => {
+			clearInterval(intervalId);
+		};
+	}, [savePost]);
 
 	const uploadImageToR2 = useCallback(async (file: File) => {
 		const formData = new FormData();
@@ -156,14 +265,91 @@ export default function Page() {
 		[],
 	);
 
+	const parsedTags = useMemo(
+		() => tags.split(",").map((tag) => tag.trim()).filter((tag) => tag.length > 0),
+		[tags],
+	);
+
+	const isValidationWarning = useMemo(
+		() => saveMessage.includes("入力してから保存してください。"),
+		[saveMessage],
+	);
+
+	const snackbarColor = useMemo<LkColorWithOnToken>(() => {
+		if (!saveMessage) {
+			return "surface";
+		}
+
+		if (isValidationWarning) {
+			return "errorcontainer";
+		}
+
+		if (saveMessage.includes("失敗") || saveMessage.includes("エラー")) {
+			return "error";
+		}
+
+		return "surface";
+	}, [isValidationWarning, saveMessage]);
+
+	const snackbarIcon = useMemo(() => {
+		if (!saveMessage) {
+			return "circle-check" as const;
+		}
+
+		if (isValidationWarning) {
+			return "circle-alert" as const;
+		}
+
+		if (saveMessage.includes("失敗") || saveMessage.includes("エラー")) {
+			return "triangle-alert" as const;
+		}
+
+		return "circle-check" as const;
+	}, [isValidationWarning, saveMessage]);
+
 	return (
 		<Container className="flex h-screen min-h-screen flex-col overflow-hidden">
-			<Section className="shrink-0">
-        <Row className="" gap="sm">
+			{saveMessage && (
+				<div className="pointer-events-none fixed left-1/2 top-sm z-50 -translate-x-1/2 m-sm">
+					<div className="pointer-events-auto">
+						<Snackbar globalColor={snackbarColor}>
+							<Icon name={snackbarIcon} />
+							<Text>{saveMessage}</Text>
+							<Button
+								label="閉じる"
+								variant="text"
+								onClick={() => setSaveMessage("")}
+							/>
+						</Snackbar>
+					</div>
+				</div>
+			)}
+			<Section className="shrink-0 p-sm">
+        <Row gap="sm" alignItems="center" justifyContent="space-between">
           <Heading tag="h1" fontClass="title1">Blog新規作成</Heading>
-					<Row className="justify-between" gap="sm">
-						<Button label="仮保存" variant="outline" color="primary" />
-						<Button label="公開" variant="fill" color="primary" />
+					<Row gap="sm" alignItems="center">
+						<Row className="border rounded-xs p-xs" gap="xs" alignItems="center">
+							<Badge icon="save" color="success" scale="md" iconStrokeWidth={2} />
+							<Text fontClass="heading">最終保存時刻: {lastSavedAt || "--:--:--"}</Text>
+						</Row>
+						<Button
+							label={isSavingDraft ? "保存中..." : "仮保存"}
+							variant="outline"
+							color="primary"
+							onClick={() => {
+								void handleDraftSave();
+							}}
+							disabled={isSavingDraft || isPublishing}
+						/>
+						<Button
+							label={isPublishing ? "公開中..." : "公開"}
+							variant="fill"
+							color="primary"
+							onClick={() => {
+								void handlePublishSave();
+							}}
+							disabled={isSavingDraft || isPublishing}
+						/>
 					</Row>
         </Row>
       </Section>
@@ -206,24 +392,37 @@ export default function Page() {
 						</Column>
 					</Container>
 				</Section>
-
 				<Section className="h-full min-h-0 overflow-hidden [&>[data-lk-component='section']]:h-full">
 					<Column gap="sm" className="h-full min-h-0 overflow-hidden">
-						<TextInput
-							value={thumbnail}
-							name="thumbnail"
-							endIcon="edit"
-							onChange={(event) => setThumbnail(event.target.value)}
-							onPaste={handleThumbnailPaste}
-							placeholder="サムネイル画像をペースト"
-						/>
+						<Row gap="sm" defaultChildBehavior="auto-grow">
+							<TextInput
+								value={thumbnail}
+								name="Thumbnail"
+								endIcon="edit"
+								onChange={(event) => setThumbnail(event.target.value)}
+								onPaste={handleThumbnailPaste}
+								placeholder="サムネイル画像をペースト"
+							/>
+							<TextInput
+								value={slug}
+								name="Slug"
+								endIcon="edit"
+								onChange={(event) => setSlug(event.target.value)}
+								placeholder="URLスラッグ（例: portfolio-v1）"
+							/>
+						</Row>
 						<Text fontClass="label-bold">一覧ページカードプレビュー</Text>
 						<Container className="max-w-xl">
-							<PostCard clickable={false} />
+							<PostCard
+								clickable={false}
+								title={title || "title"}
+								description={description || "description"}
+								thumbnail={thumbnail}
+								tags={parsedTags.length > 0 ? parsedTags : ["タグ"]}
+							/>
 						</Container>
 						<article className="admin-editor-preview-pane min-h-0 flex-1 space-y-4 overflow-y-auto">
 						<h1 className="text-3xl font-bold">{title || "PreView"}</h1>
-
 						<div className={mdStyles.markdownPreview}>
 							<ReactMarkdown>{content || ""}</ReactMarkdown>
 						</div>
