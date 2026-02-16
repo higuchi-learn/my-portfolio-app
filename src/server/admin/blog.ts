@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { blogRepository } from "@/server/repositories/admin/blog";
+import { blogRepository } from "@/server/repositories/admin/blogs";
 import { createBlogSchema } from "@/db/posts/blog-zod";
 import { AppEnv } from "@/types/context";
 

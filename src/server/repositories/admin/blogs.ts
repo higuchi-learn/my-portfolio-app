@@ -1,5 +1,5 @@
 import { blogs } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import type { DB } from "@/types/db";
 
 export const blogRepository = (db: DB) => ({
@@ -7,7 +7,8 @@ export const blogRepository = (db: DB) => ({
   async findAll() {
     return await db
       .select()
-      .from(blogs);
+      .from(blogs)
+      .orderBy(desc(blogs.createdAt));
   },
 
   // SELECT * FROM blogs WHERE slug = 'xxx' LIMIT 1;
@@ -71,6 +72,7 @@ export const blogRepository = (db: DB) => ({
     return await db
       .select()
       .from(blogs)
-      .where(eq(blogs.status, "published"));
+      .where(eq(blogs.status, "published"))
+      .orderBy(desc(blogs.createdAt));
   },
 });

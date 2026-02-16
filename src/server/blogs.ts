@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { BlogRepository } from "@/server/repositories/blog";
+import { BlogRepository } from "@/server/repositories/blogs";
 import { AppEnv } from "@/types/context";
 
 export const blogRoute = new Hono<AppEnv>();

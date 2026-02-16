@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "@/db/schema/index";
-import { blogRoute } from "@/server/blog";
+import { blogRoute } from "@/server/blogs";
 import { worksRoute } from "@/server/works";
 import { booksRoute } from "@/server/books";
 import { adminBlog } from "@/server/admin/blog";

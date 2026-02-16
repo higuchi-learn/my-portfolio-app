@@ -1,12 +1,13 @@
 import { books } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import type { DB } from "@/types/db";
 
 export const booksRepository = (db: DB) => ({
   async findAll() {
     return await db
       .select()
-      .from(books);
+      .from(books)
+      .orderBy(desc(books.createdAt));
   },
 
   async findBySlug(slug: string) {
@@ -47,6 +48,7 @@ export const booksRepository = (db: DB) => ({
     return await db
       .select()
       .from(books)
-      .where(eq(books.status, "published"));
+      .where(eq(books.status, "published"))
+      .orderBy(desc(books.createdAt));
   },
 });

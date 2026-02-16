@@ -1,6 +1,6 @@
 import type { DB } from "@/types/db";
 import * as schema from "@/db/schema/index";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 
 export class BooksRepository {
   constructor(private db: DB) {}
@@ -9,7 +9,8 @@ export class BooksRepository {
     return await this.db
       .select()
       .from(schema.books)
-      .where(eq(schema.books.status, "published"));
+      .where(eq(schema.books.status, "published"))
+      .orderBy(desc(schema.books.createdAt));
   }
 
   async findPublicBySlug(slug: string) {
