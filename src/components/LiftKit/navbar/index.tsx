@@ -49,6 +49,7 @@ export default function NavBar({
   navDropdowns,
   iconButtons,
   ctaButtons,
+  className,
   ...restProps
 }: LkNavBarProps) {
   const dataAttrs = useMemo(() => propsToDataAttrs({ material, restProps }, "navbar"), [material, restProps]);
@@ -68,7 +69,7 @@ export default function NavBar({
 
 
   return (
-    <div data-lk-component="navbar" {...dataAttrs}>
+    <div data-lk-component="navbar" className={className} {...restProps} {...dataAttrs}>
       {/* Desktop Navbar */}
       <div className="navbar-desktop">
         <Row alignItems="center" gap="sm">

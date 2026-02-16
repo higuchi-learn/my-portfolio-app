@@ -2,19 +2,20 @@
 import Heading from "@/components/LiftKit/heading";
 import Text from "@/components/LiftKit/text";
 import Header from "@/components/base/Header";
+import Container from "@/components/LiftKit/container";
+import Footer from "@/components/base/Footer";
 
 export default function Home() {
 	return (
-		<div className="min-h-screen p-6">
+		<Container className="min-h-screen p-sm flex flex-col">
 			<Header />
-
-			<main className="mt-12">
+			<Container className="flex-1">
 				<Heading tag="h1">Welcome to My Portfolio</Heading>
-				<Text className="mt-4">
-					ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ
-				</Text>
-
-			</main>
-		</div>
+					<Text>
+						ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ
+					</Text>
+			</Container>
+			<Footer />
+		</Container>
 	);
 }
