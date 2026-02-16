@@ -6,6 +6,7 @@ import Image from "@/components/LiftKit/image";
 import Container from "@/components/LiftKit/container";
 import Column from "@/components/LiftKit/column";
 import Row from "@/components/LiftKit/row";
+import dummyImage from "@/assets/dummy-image.webp";
 
 interface PostCardProps {
   clickable?: boolean;
@@ -28,9 +29,11 @@ export default function PostCard({
   status,
   onClick,
 }: PostCardProps) {
-  const thumbnailSrc =
-    thumbnail?.trim() ||
-    "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&h=900&q=80";
+  const fallbackThumbnailSrc = typeof dummyImage === "string" ? dummyImage : dummyImage.src;
+  const normalizedThumbnail = thumbnail?.trim();
+  const thumbnailSrc = normalizedThumbnail && normalizedThumbnail !== "@/assets/dummy-image.webp"
+    ? normalizedThumbnail
+    : fallbackThumbnailSrc;
 
   const displayDate = publishedDate ?? new Date().toISOString().slice(0, 10);
 
