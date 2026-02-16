@@ -2,7 +2,7 @@ import type { DB } from "@/types/db";
 import * as schema from "@/db/schema/index";
 import { eq, and, desc } from "drizzle-orm";
 
-export class BlogRepository {
+export class BlogsRepository {
   constructor(private db: DB) {}
 
   async findAllPublic() {

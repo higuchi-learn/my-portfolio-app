@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "@/db/schema/index";
-import { blogRoute } from "@/server/blogs";
+import { blogsRoute } from "@/server/blogs";
 import { worksRoute } from "@/server/works";
 import { booksRoute } from "@/server/books";
-import { adminBlogs } from "@/server/admin/blog";
+import { adminBlogs } from "@/server/admin/blogs";
 import { adminWorks } from "@/server/admin/works";
 import { adminBooks } from "@/server/admin/books";
 import { adminPosts } from "@/server/admin/posts";
@@ -26,7 +26,7 @@ app.use("*", async (c, next) => {
 // 動作確認用
 app.get("/", (c) => c.json({ ok: true }));
 
-app.route("/blogs", blogRoute);
+app.route("/blogs",blogsRoute);
 app.route("/works",worksRoute);
 app.route("/books",booksRoute);
 app.route("/admin/blogs", adminBlogs);
