@@ -25,7 +25,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<head>
-				<link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
+				<link rel="icon" href="/favicon.ico" type="image/x-icon"></link>
 			</head>
 			<body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 				<div className="app-content-width">{children}</div>

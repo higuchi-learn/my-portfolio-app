@@ -11,6 +11,8 @@ import "@/components/LiftKit/navbar/navbar.css";
 import MaterialLayer from "@/components/LiftKit/material-layer";
 
 import PlaceholderBlock from "@/components/LiftKit/placeholder-block";
+import logoLong from "@/assets/logo-long.webp";
+import logo from "@/assets/logo.webp";
 
 interface LkNavBarProps extends React.HTMLAttributes<HTMLDivElement> {
   material?: LkMaterial;
@@ -74,7 +76,7 @@ export default function NavBar({
       <div className="navbar-desktop">
         <Row alignItems="center" gap="sm">
           <Link href="/">
-            <Image alt="" src="/logotype.svg" height="md"/>
+            <Image alt="" src={logoLong.src} height="xl"/>
           </Link>
         </Row>
         <Row>
@@ -92,7 +94,7 @@ export default function NavBar({
         <Column alignItems="start" className={`navbar-mobile ${menuOpen ? "active" : ""}`}>
           <IconButton icon="menu" onClick={() => toggleMenu()} />
           <Link href="/">
-            <Image alt="" src="/vercel.svg" width="md" height="md" />
+            <Image alt="" src={logo.src} width="md" height="md" />
           </Link>
           <Column>{navButtons}</Column>
           <Column>{navDropdowns}</Column>
