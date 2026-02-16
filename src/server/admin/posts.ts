@@ -43,7 +43,26 @@ adminPosts.get("/images/:key", async (c) => {
   }
 
   const headers = new Headers();
-  object.writeHttpMetadata(headers);
+  const httpMetadata = object.httpMetadata;
+
+  if (httpMetadata?.contentType) {
+    headers.set("content-type", httpMetadata.contentType);
+  }
+  if (httpMetadata?.contentLanguage) {
+    headers.set("content-language", httpMetadata.contentLanguage);
+  }
+  if (httpMetadata?.contentDisposition) {
+    headers.set("content-disposition", httpMetadata.contentDisposition);
+  }
+  if (httpMetadata?.contentEncoding) {
+    headers.set("content-encoding", httpMetadata.contentEncoding);
+  }
+  if (httpMetadata?.cacheControl) {
+    headers.set("cache-control", httpMetadata.cacheControl);
+  }
+  if (httpMetadata?.cacheExpiry) {
+    headers.set("expires", httpMetadata.cacheExpiry.toUTCString());
+  }
   headers.set("etag", object.httpEtag);
 
   if (!headers.get("content-type")) {

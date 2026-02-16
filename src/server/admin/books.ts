@@ -46,12 +46,18 @@ adminBooks.post("/create", async (c) => {
   const existing = await repo.findBySlug(parsed.data.slug);
 
   if (existing) {
-    return c.json(
-      {
-        message: "Slug already exists",
-      },
-      409
-    );
+    const updatedBook = await repo.updateBySlug(parsed.data.slug, {
+      title: parsed.data.title,
+      author: parsed.data.author,
+      description: parsed.data.description,
+      thumbnail: parsed.data.thumbnail,
+      content: parsed.data.content,
+      tags: parsed.data.tags,
+      status: parsed.data.status,
+      rating: parsed.data.rating,
+    });
+
+    return c.json(updatedBook, 200);
   }
 
   const book = await repo.create(parsed.data);

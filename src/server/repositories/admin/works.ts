@@ -43,6 +43,33 @@ export const worksRepository = (db: DB) => ({
       .get();
   },
 
+  async updateBySlug(
+    slug: string,
+    data: {
+      title: string;
+      description: string;
+      thumbnail?: string;
+      content: string;
+      techStack?: string;
+      repositoryUrl?: string;
+      siteUrl?: string;
+      status?: "draft" | "published" | "archived";
+    }
+  ) {
+    const now = new Date().toISOString();
+
+    return await db
+      .update(works)
+      .set({
+        ...data,
+        status: data.status ?? "draft",
+        updatedAt: now,
+      })
+      .where(eq(works.slug, slug))
+      .returning()
+      .get();
+  },
+
   async findAllPublished() {
     return await db
       .select()

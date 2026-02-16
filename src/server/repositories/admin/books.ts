@@ -44,6 +44,34 @@ export const booksRepository = (db: DB) => ({
       .get();
   },
 
+  async updateBySlug(
+    slug: string,
+    data: {
+      title: string;
+      author: string;
+      description: string;
+      thumbnail?: string;
+      content: string;
+      tags?: string;
+      status?: "draft" | "published" | "archived";
+      rating?: number;
+    }
+  ) {
+    const now = new Date().toISOString();
+
+    return await db
+      .update(books)
+      .set({
+        ...data,
+        status: data.status ?? "draft",
+        rating: data.rating ?? 1,
+        updatedAt: now,
+      })
+      .where(eq(books.slug, slug))
+      .returning()
+      .get();
+  },
+
   async findAllPublished() {
     return await db
       .select()

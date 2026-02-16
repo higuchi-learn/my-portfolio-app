@@ -14,6 +14,7 @@ interface PostCardProps {
   thumbnail?: string;
   tags?: string[];
   publishedDate?: string;
+  status?: "draft" | "published" | "archived";
   onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
@@ -24,6 +25,7 @@ export default function PostCard({
   thumbnail,
   tags = ["旅行"],
   publishedDate,
+  status,
   onClick,
 }: PostCardProps) {
   const thumbnailSrc =
@@ -31,6 +33,21 @@ export default function PostCard({
     "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&h=900&q=80";
 
   const displayDate = publishedDate ?? new Date().toISOString().slice(0, 10);
+
+  const statusLabelMap = {
+    draft: "未公開",
+    published: "公開",
+    archived: "削除済み",
+  } as const;
+
+  const statusColorMap = {
+    draft: "warning",
+    published: "surface",
+    archived: "error",
+  } as const;
+
+  const statusLabel = status ? statusLabelMap[status] : undefined;
+  const statusColor = status ? statusColorMap[status] : undefined;
 
   return (
     <Card scaleFactor="body"
@@ -50,7 +67,10 @@ export default function PostCard({
               <Sticker key={tag} bgColor="secondary">{tag}</Sticker>
             ))}
           </Row>
-          <Text className="mt-2 text-sm text-gray-500">投稿日 : {displayDate}</Text>
+          <Row gap="md">
+            <Text className="mt-2 text-sm text-gray-500">投稿日 : {displayDate}</Text>
+            {statusLabel && statusColor ? <Sticker bgColor={statusColor}>{statusLabel}</Sticker> : null}
+          </Row>
         </Column>
           <Image
             src={thumbnailSrc}

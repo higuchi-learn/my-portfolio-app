@@ -46,12 +46,18 @@ adminWorks.post("/create", async (c) => {
   const existing = await repo.findBySlug(parsed.data.slug);
 
   if (existing) {
-    return c.json(
-      {
-        message: "Slug already exists",
-      },
-      409
-    );
+    const updatedWork = await repo.updateBySlug(parsed.data.slug, {
+      title: parsed.data.title,
+      description: parsed.data.description,
+      thumbnail: parsed.data.thumbnail,
+      content: parsed.data.content,
+      techStack: parsed.data.techStack,
+      repositoryUrl: parsed.data.repositoryUrl,
+      siteUrl: parsed.data.siteUrl,
+      status: parsed.data.status,
+    });
+
+    return c.json(updatedWork, 200);
   }
 
   const work = await repo.create(parsed.data);

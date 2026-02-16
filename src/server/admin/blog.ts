@@ -3,16 +3,16 @@ import { blogRepository } from "@/server/repositories/admin/blogs";
 import { createBlogSchema } from "@/db/posts/blog-zod";
 import { AppEnv } from "@/types/context";
 
-export const adminBlog = new Hono<AppEnv>();
+export const adminBlogs = new Hono<AppEnv>();
 
-adminBlog.get("/", async (c) => {
+adminBlogs.get("/", async (c) => {
   const db = c.get("db");
   const repo = blogRepository(db);
   const blogs = await repo.findAll();
   return c.json(blogs);
 });
 
-adminBlog.get("/:slug", async (c) => {
+adminBlogs.get("/:slug", async (c) => {
   const db = c.get("db");
   const repo = blogRepository(db);
   const slug = c.req.param("slug");
@@ -25,7 +25,7 @@ adminBlog.get("/:slug", async (c) => {
   return c.json(blog);
 });
 
-adminBlog.post("/create", async (c) => {
+adminBlogs.post("/create", async (c) => {
   const db = c.get("db");
   const repo = blogRepository(db);
 
@@ -64,4 +64,4 @@ adminBlog.post("/create", async (c) => {
   return c.json(blog, 201);
 });
 
-export default adminBlog;
+export default adminBlogs;
