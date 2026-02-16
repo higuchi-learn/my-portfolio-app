@@ -1,0 +1,102 @@
+"use client";
+
+import { useMemo, type ChangeEvent } from "react";
+import { propsToDataAttrs } from "@/lib/utilities";
+import "@/components/LiftKit/text-input/text-input.css";
+import Icon from "@/components/LiftKit/icon";
+import Row from "@/components/LiftKit/row";
+import Text from "@/components/LiftKit/text";
+import StateLayer from "@/components/LiftKit/state-layer";
+import { IconName } from "lucide-react/dynamic";
+import { useState } from "react";
+
+interface LkTextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  labelPosition?: "default" | "on-input";
+  helpText?: string;
+  placeholder?: string;
+  name?: string;
+  endIcon?: IconName;
+  labelBackgroundColor?: LkColor;
+}
+
+export default function TextInput({
+  labelPosition = "default",
+  helpText,
+  placeholder = "Placeholder",
+  name,
+  endIcon,
+  labelBackgroundColor,
+  ...restProps
+}: LkTextInputProps) {
+  const textInputProps = useMemo(
+    () => propsToDataAttrs({ labelPosition }, "text-input"),
+    [labelPosition],
+  );
+
+  const [inputValue, setInputValue] = useState(
+    typeof restProps.defaultValue === "string" ? restProps.defaultValue : "",
+  );
+
+  const isControlled = restProps.value !== undefined;
+  const currentValue = isControlled ? String(restProps.value ?? "") : inputValue;
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!isControlled) {
+      setInputValue(event.target.value);
+    }
+    restProps.onChange?.(event);
+  };
+
+  const inputId = restProps.id ?? name;
+
+  return (
+    <div data-lk-component="text-input" {...textInputProps}>
+      {labelPosition === "default" && !!name && (
+        <label htmlFor={inputId} className="label">
+          {name}
+        </label>
+      )}
+
+      <div
+        data-lk-text-input-el="input-wrap"
+        data-lk-input-help-text={helpText ? "true" : "false"}
+        data-help-text={helpText}
+      >
+        {labelPosition === "on-input" && !!name && (
+          <label
+            htmlFor={inputId}
+            className={`body ${labelBackgroundColor ? ` bg-${labelBackgroundColor}` : ""} ${currentValue ? "on-field-with-value-set" : ""}`}
+          >
+            {name}
+          </label>
+        )}
+        <input
+          type="text"
+          name={name}
+          id={inputId}
+          placeholder={labelPosition !== "on-input" ? placeholder : ""}
+          onChange={handleChange}
+          value={currentValue}
+          {...restProps}
+        />
+        <StateLayer />
+        {endIcon && <Icon name={endIcon} />}
+        {/* implementation omitted for brevity */}
+      </div>
+
+      {helpText && (
+        <Row alignItems="center">
+          <Icon
+            name="info"
+            fontClass="capline"
+            color="outline"
+            opticShift={true}
+          />
+          <Text color="outline" fontClass="caption" className="m-left-2xs">
+            Help text goes here
+          </Text>
+        </Row>
+      )}
+    </div>
+  );
+}

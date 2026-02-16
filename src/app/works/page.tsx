@@ -1,9 +1,9 @@
 "use client";
-import Heading from "@/components/heading";
-import Text from "@/components/text";
-import Header from "@/components/layouts/header";
-import PostCard from "@/components/features/posts";
-import Grid from "@/components/grid";
+import Heading from "@/components/LiftKit/heading";
+import Text from "@/components/LiftKit/text";
+import Header from "@/components/base/header";
+import PostCard from "@/components/layouts/postCard";
+import Grid from "@/components/LiftKit/grid";
 
 export default function WorksPage() {
   return (

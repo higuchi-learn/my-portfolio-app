@@ -1,7 +1,7 @@
 "use client";
-import Heading from "@/components/heading";
-import Text from "@/components/text";
-import Header from "@/components/layouts/header";
+import Heading from "@/components/LiftKit/heading";
+import Text from "@/components/LiftKit/text";
+import Header from "@/components/base/header";
 
 export default function Home() {
 	return (
