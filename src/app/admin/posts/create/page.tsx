@@ -15,7 +15,7 @@ import Text from "@/components/LiftKit/text";
 import Row from "@/components/LiftKit/row";
 import Icon from "@/components/LiftKit/icon";
 import Badge from "@/components/LiftKit/badge";
-import PostCard from "@/components/layouts/postCard";
+import PostCard from "@/components/layouts/PostCard";
 import Snackbar from "@/components/LiftKit/snackbar";
 import mdStyles from "@/app/markdown-preview.module.css";
 import adminEditorMdeStyles from "@/app/admin/admin-editor-mde.module.css";

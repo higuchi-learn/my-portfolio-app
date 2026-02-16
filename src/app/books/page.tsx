@@ -1,8 +1,8 @@
 "use client";
 import Heading from "@/components/LiftKit/heading";
 import Text from "@/components/LiftKit/text";
-import Header from "@/components/base/header";
-import PostCard from "@/components/layouts/postCard";
+import Header from "@/components/base/Header";
+import PostCard from "@/components/layouts/PostCard";
 import Grid from "@/components/LiftKit/grid";
 
 export default function BooksPage() {

@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
-import Header from "@/components/base/header";
+import Header from "@/components/base/Header";
 import Text from "@/components/LiftKit/text";
 import mdStyles from "@/app/markdown-preview.module.css";
 
