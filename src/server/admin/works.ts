@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { worksRepository } from "@/server/repositories/admin/works";
-import { createWorkSchema } from "@/db/blog/work-zod";
+import { createWorkSchema } from "@/db/posts/work-zod";
 import { AppEnv } from "@/types/context";
 
 export const adminWorks = new Hono<AppEnv>();

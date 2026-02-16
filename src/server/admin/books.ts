@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { booksRepository } from "@/server/repositories/admin/books";
-import { createBookSchema } from "@/db/blog/book-zod";
+import { createBookSchema } from "@/db/posts/book-zod";
 import { AppEnv } from "@/types/context";
 
 export const adminBooks = new Hono<AppEnv>();

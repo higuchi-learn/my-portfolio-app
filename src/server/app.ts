@@ -7,6 +7,7 @@ import { booksRoute } from "@/server/books";
 import { adminBlog } from "@/server/admin/blog";
 import { adminWorks } from "@/server/admin/works";
 import { adminBooks } from "@/server/admin/books";
+import { adminPosts } from "@/server/admin/posts";
 import { AppEnv } from "@/types/context";
 
 // Honoアプリケーションの作成
@@ -31,6 +32,7 @@ app.route("/books",booksRoute);
 app.route("/admin/blogs", adminBlog);
 app.route("/admin/works", adminWorks);
 app.route("/admin/books", adminBooks);
+app.route("/admin/posts", adminPosts);
 
 // エラーハンドリング
 app.onError((err, c) => {

@@ -1,1 +1,3 @@
-export { default } from "@/app/admin/blog/page";
+export default function Page() {
+	return <div />;
+}
