@@ -1,21 +1,21 @@
-import { posts } from "@/db/schema";
+import { blogs } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import type { DB } from "@/types/db";
 
-export const postsRepository = (db: DB) => ({
+export const blogRepository = (db: DB) => ({
 
   async findAll() {
     return await db
       .select()
-      .from(posts);
+      .from(blogs);
   },
 
-  // SELECT * FROM posts WHERE slug = 'xxx' LIMIT 1;
+  // SELECT * FROM blogs WHERE slug = 'xxx' LIMIT 1;
   async findBySlug(slug: string) {
     return await db
       .select()
-      .from(posts)
-      .where(eq(posts.slug, slug))
+      .from(blogs)
+      .where(eq(blogs.slug, slug))
       .get();
   },
 
@@ -31,7 +31,7 @@ export const postsRepository = (db: DB) => ({
     const now = new Date().toISOString();
 
     return await db
-      .insert(posts)
+      .insert(blogs)
       .values({
         ...data,
         status: data.status ?? "draft",
@@ -56,13 +56,13 @@ export const postsRepository = (db: DB) => ({
     const now = new Date().toISOString();
 
     return await db
-      .update(posts)
+      .update(blogs)
       .set({
         ...data,
         status: data.status ?? "draft",
         updatedAt: now,
       })
-      .where(eq(posts.slug, slug))
+      .where(eq(blogs.slug, slug))
       .returning()
       .get();
   },
@@ -70,7 +70,7 @@ export const postsRepository = (db: DB) => ({
   async findAllPublished() {
     return await db
       .select()
-      .from(posts)
-      .where(eq(posts.status, "published"));
+      .from(blogs)
+      .where(eq(blogs.status, "published"));
   },
 });

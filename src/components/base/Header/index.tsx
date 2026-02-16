@@ -7,7 +7,7 @@ export default function Header() {
   return (
     <NavBar
       navButtons={[
-        <Link key="blog" href="/posts">
+        <Link key="blog" href="/blogs">
           <Button label="Blog" variant="text" />
         </Link>,
         <Link key="works" href="/works">

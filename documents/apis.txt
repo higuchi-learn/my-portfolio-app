@@ -1,5 +1,5 @@
-posts
-GET postsテーブルall
+blogs
+GET blogsテーブルall
 検索 tag
 
 works
@@ -15,10 +15,10 @@ POST
 
 auth
 
-admin/posts
+admin/blogs
 POST
 
-/admin/posts/[slug]/edit
+/admin/blogs/[slug]/edit
 PUT
 
 admin/works

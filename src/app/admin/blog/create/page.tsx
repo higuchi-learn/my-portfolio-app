@@ -80,7 +80,7 @@ export default function Page() {
 		}
 
 		try {
-			const response = await fetch("/api/admin/posts/create", {
+			const response = await fetch("/api/admin/blogs/create", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -140,7 +140,7 @@ export default function Page() {
 		const formData = new FormData();
 		formData.append("image", file);
 
-		const response = await fetch("/api/admin/posts/upload-image", {
+		const response = await fetch("/api/admin/blogs/upload-image", {
 			method: "POST",
 			body: formData,
 		});

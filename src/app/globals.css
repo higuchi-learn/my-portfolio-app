@@ -75,15 +75,14 @@ body {
 }
 
 @media (max-width: 1024px) {
-  [data-lk-component="grid"].posts-card-grid {
+  [data-lk-component="grid"].blog-card-grid {
     grid-template-columns: 1fr !important;
   }
 
   /* 幅が狭いときは一行に一枚のみ配置 */
-  .posts-card-item {
+  .blog-card-item {
     width: 100vw !important;
     max-width: 570px !important;
     justify-self: center;
   }
 }
-

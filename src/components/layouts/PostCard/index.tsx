@@ -34,7 +34,7 @@ export default function PostCard({
 
   return (
     <Card scaleFactor="body"
-            className="w-full posts-card-item"
+            className="w-full blog-card-item"
               variant="outline"
               material="glass"
               lk-material="glass"

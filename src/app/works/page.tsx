@@ -16,7 +16,7 @@ export default function WorksPage() {
           制作物を紹介するページです.
         </Text>
 
-        <Grid columns={2} gap="sm" className="posts-card-grid">
+        <Grid columns={2} gap="sm" className="blog-card-grid">
           <PostCard/>
           <PostCard/>
           <PostCard/>

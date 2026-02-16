@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS posts (
+CREATE TABLE IF NOT EXISTS blogs (
   id TEXT PRIMARY KEY NOT NULL UNIQUE,
   slug TEXT NOT NULL,
   title TEXT NOT NULL,
@@ -41,5 +41,5 @@ CREATE TABLE IF NOT EXISTS books (
   updated_at TIMESTAMP NOT NULL
 );
 
-INSERT INTO posts (id, slug, title, description, content, tags, status, created_at, updated_at) VALUES
+INSERT INTO blogs (id, slug, title, description, content, tags, status, created_at, updated_at) VALUES
 ('1', 'post-test', 'test to My Blog', 'This is the first post on my new blog!', 'Hello everyone! This is my first post. Stay tuned for more content.', 'introduction, welcome', 'published', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

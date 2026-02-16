@@ -17,23 +17,23 @@ interface PostItem {
   createdAt: string;
 }
 
-export default function PostsPage() {
+export default function BlogPage() {
   const router = useRouter();
-  const [posts, setPosts] = useState<PostItem[]>([]);
+  const [blogs, setBlogs] = useState<PostItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchBlogs = async () => {
       try {
-        const response = await fetch("/api/posts", { cache: "no-store" });
+        const response = await fetch("/api/blogs", { cache: "no-store" });
 
         if (!response.ok) {
           throw new Error("投稿の取得に失敗しました。");
         }
 
         const data = (await response.json()) as PostItem[];
-        setPosts(data);
+        setBlogs(data);
       } catch (error) {
         console.error(error);
         setErrorMessage("投稿一覧の読み込みに失敗しました。");
@@ -42,7 +42,7 @@ export default function PostsPage() {
       }
     };
 
-    void fetchPosts();
+    void fetchBlogs();
   }, []);
 
   const parseTags = (tags: string | null) => {
@@ -70,22 +70,22 @@ export default function PostsPage() {
 
         {!isLoading && errorMessage && <Text>{errorMessage}</Text>}
 
-        {!isLoading && !errorMessage && posts.length === 0 && (
+        {!isLoading && !errorMessage && blogs.length === 0 && (
           <Text>公開中の投稿はまだありません。</Text>
         )}
 
-        {!isLoading && !errorMessage && posts.length > 0 && (
-          <Grid columns={2} gap="sm" className="posts-card-grid">
-            {posts.map((post) => (
+        {!isLoading && !errorMessage && blogs.length > 0 && (
+          <Grid columns={2} gap="sm" className="blog-card-grid">
+            {blogs.map((blog) => (
               <PostCard
-                key={post.id}
+                key={blog.id}
                 clickable
-                onClick={() => router.push(`/posts/${post.slug}`)}
-                title={post.title}
-                description={post.description}
-                thumbnail={post.thumbnail ?? undefined}
-                tags={parseTags(post.tags)}
-                publishedDate={post.createdAt.slice(0, 10)}
+                onClick={() => router.push(`/blogs/${blog.slug}`)}
+                title={blog.title}
+                description={blog.description}
+                thumbnail={blog.thumbnail ?? undefined}
+                tags={parseTags(blog.tags)}
+                publishedDate={blog.createdAt.slice(0, 10)}
               />
             ))}
           </Grid>

@@ -5,7 +5,7 @@ import Header from "@/components/base/Header";
 import Text from "@/components/LiftKit/text";
 import mdStyles from "@/app/markdown-preview.module.css";
 
-interface PostDetail {
+interface BlogDetail {
 	id: string;
 	slug: string;
 	title: string;
@@ -40,7 +40,7 @@ export default async function Page({
 
 	try {
 		const origin = await getRequestOrigin();
-		const response = await fetch(`${origin}/api/posts/${slug}`, { cache: "no-store" });
+		const response = await fetch(`${origin}/api/blogs/${slug}`, { cache: "no-store" });
 
 		if (response.status === 404) {
 			notFound();
@@ -50,7 +50,7 @@ export default async function Page({
 			throw new Error("投稿の取得に失敗しました。");
 		}
 
-		const post = (await response.json()) as PostDetail;
+		const blog = (await response.json()) as BlogDetail;
 
 		return (
 			<div className="min-h-screen p-6">
@@ -58,9 +58,9 @@ export default async function Page({
 
 				<main className="mt-12">
 					<article className="space-y-4">
-						<h1 className="text-3xl font-bold">{post.title}</h1>
+						<h1 className="text-3xl font-bold">{blog.title}</h1>
 						<div className={mdStyles.markdownPreview}>
-							<ReactMarkdown>{post.content || ""}</ReactMarkdown>
+							<ReactMarkdown>{blog.content || ""}</ReactMarkdown>
 						</div>
 					</article>
 				</main>

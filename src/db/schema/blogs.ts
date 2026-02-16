@@ -2,7 +2,7 @@ import { sqliteTable, text, check } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 import { ArticleStatus } from "./common";
 
-export const posts = sqliteTable("posts", {
+export const blogs = sqliteTable("blogs", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),

@@ -16,7 +16,7 @@ export default function BooksPage() {
           技術書の感想やレビューを記録するページです.
         </Text>
 
-        <Grid columns={2} gap="sm" className="posts-card-grid">
+        <Grid columns={2} gap="sm" className="blog-card-grid">
           <PostCard/>
           <PostCard/>
           <PostCard/>

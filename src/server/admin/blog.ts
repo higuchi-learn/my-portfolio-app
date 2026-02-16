@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import { postsRepository } from "@/server/repositories/admin/posts";
-import { createPostSchema } from "@/db/posts/post-zod";
+import { blogRepository } from "@/server/repositories/admin/blog";
+import { createBlogSchema } from "@/db/blog/blog-zod";
 import { AppEnv } from "@/types/context";
 
-export const adminPosts = new Hono<AppEnv>();
+export const adminBlog = new Hono<AppEnv>();
 
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
 
@@ -31,27 +31,27 @@ function getExtensionFromFile(file: File) {
   }
 }
 
-adminPosts.get("/", async (c) => {
+adminBlog.get("/", async (c) => {
   const db = c.get("db");
-  const repo = postsRepository(db);
-  const posts = await repo.findAll();
-  return c.json(posts);
+  const repo = blogRepository(db);
+  const blogs = await repo.findAll();
+  return c.json(blogs);
 });
 
-adminPosts.get("/:slug", async (c) => {
+adminBlog.get("/:slug", async (c) => {
   const db = c.get("db");
-  const repo = postsRepository(db);
+  const repo = blogRepository(db);
   const slug = c.req.param("slug");
-  const post = await repo.findBySlug(slug);
+  const blog = await repo.findBySlug(slug);
 
-  if (!post) {
+  if (!blog) {
     return c.json({ error: "Not found" }, 404);
   }
 
-  return c.json(post);
+  return c.json(blog);
 });
 
-adminPosts.get("/images/:key", async (c) => {
+adminBlog.get("/images/:key", async (c) => {
   const r2 = c.env?.R2;
   if (!r2) {
     return c.json({ error: "R2 binding is not configured" }, 500);
@@ -75,7 +75,7 @@ adminPosts.get("/images/:key", async (c) => {
   return new Response(object.body, { headers });
 });
 
-adminPosts.post("/upload-image", async (c) => {
+adminBlog.post("/upload-image", async (c) => {
   const r2 = c.env?.R2;
   if (!r2) {
     return c.json({ message: "R2 binding is not configured" }, 500);
@@ -106,7 +106,7 @@ adminPosts.post("/upload-image", async (c) => {
   });
 
   const url = new URL(c.req.url);
-  const imagePath = `/api/admin/posts/images/${key}`;
+  const imagePath = `/api/admin/blogs/images/${key}`;
 
   return c.json({
     key,
@@ -115,14 +115,14 @@ adminPosts.post("/upload-image", async (c) => {
   });
 });
 
-adminPosts.post("/create", async (c) => {
+adminBlog.post("/create", async (c) => {
   const db = c.get("db");
-  const repo = postsRepository(db);
+  const repo = blogRepository(db);
 
   const body = await c.req.json();
 
   // バリデーション
-  const parsed = createPostSchema.safeParse(body);
+  const parsed = createBlogSchema.safeParse(body);
 
   if (!parsed.success) {
   return c.json(
@@ -137,7 +137,7 @@ adminPosts.post("/create", async (c) => {
   const existing = await repo.findBySlug(parsed.data.slug);
 
   if (existing) {
-    const updatedPost = await repo.updateBySlug(parsed.data.slug, {
+    const updatedBlog = await repo.updateBySlug(parsed.data.slug, {
       title: parsed.data.title,
       description: parsed.data.description,
       thumbnail: parsed.data.thumbnail,
@@ -146,12 +146,12 @@ adminPosts.post("/create", async (c) => {
       status: parsed.data.status,
     });
 
-    return c.json(updatedPost, 200);
+    return c.json(updatedBlog, 200);
   }
 
-  const post = await repo.create(parsed.data);
+  const blog = await repo.create(parsed.data);
 
-  return c.json(post, 201);
+  return c.json(blog, 201);
 });
 
-export default adminPosts;
+export default adminBlog;
